@@ -1,0 +1,42 @@
+<?php
+session_start();
+?>
+<!DOCTYPE html>
+<html>
+  <head>
+  </head>
+  <body>
+    <?php
+      $title = "Create a new receipt";  
+    ?>
+    <h1> <? echo $title ?> </h1>
+    <?php
+    $msg = "Before anything";
+    if (isset($_SESSION['receipt_create_msg'])) {
+      $msg = $_SESSION['receipt_create_msg'];
+    }
+    ?>
+    <h3> <?php echo $msg ?> </h3>
+    <form action="../actions/receipt.create.php" method="post"> 
+      <input type="hidden" name="receipt_create_msg">
+      <input list="clients_list" name="client_name" >
+      <datalist id="clients_list"> 
+        <?php
+        $conn = mysqli_connect("localhost", "root", "root", "fundasol");
+        if (mysqli_connect_errno()){
+          echo "failed" . mysqli_connect_error();
+        } else {
+          $sql = "Select * from clients";
+          $clients = mysqli_query($conn, $sql);
+          while($row = mysqli_fetch_array($clients)) {
+            echo "<option value=\"" . $row['name'] . "\">";
+          }
+        }
+        mysqli_close($conn);
+         ?>
+      </datalist> 
+      <input type="text" id="receipt_amount" name="amount" placeholder="Cantidad" required>
+      <input type="submit" value="Pagar">
+    </form>
+  </body>
+</html>

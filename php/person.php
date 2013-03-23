@@ -1,9 +1,14 @@
 <?php
 
 class Person {
-  var $name;
-  var $gender;
-  var $stateID;
+  public $name;
+  public $gender;
+  public $stateID;
+  public function __constructor($name, $gender, $stateID) {
+    $this->name = $name;
+    $this->gender = $gender;
+    $this->stateID = $stateID;
+  }
 }
 
 ?>
