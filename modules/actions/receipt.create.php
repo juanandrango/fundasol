@@ -1,5 +1,6 @@
 <?php
 session_start();
+$_SESSION['search_action'] = 'payment';
 $client_name = $_POST['client_name'];
 $amount = $_POST['amount'];
 //TODO not assume this is valid and sanitaded.
@@ -11,5 +12,5 @@ if (mysqli_query($conn, $sql) === false) {
   $_SESSION['receipt_create_msg'] = "Data inserted!";
 }
 mysqli_close($conn);
-header("Location: http://localhost:8888/fundasol/modules/views/receipt.view.create.phtml");
+header("Location: ../../index.php");
 ?>
