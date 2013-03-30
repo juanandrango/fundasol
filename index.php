@@ -9,21 +9,24 @@ session_start();
 </head>
 <body>
   <?php
-  $title = "GUI Fundasol Employee interface";
+  $title = "Fundasol";
+  $search = $_SESSION['search'];
   ?>
   <div class="searchBarCtnr container">
     <div class="row">
-      <div class="span8">
+      <div class="span12">
         <h1> <?php echo $title ?> </h1>
       </div>
     </div>
     <div class="row">
-      <div class="span8">
+      <div class="span12">
         <form class="form-search" action="#" method="POST">
           <div class="input-append">
-            <input type="text" class="span6 search-query" list="accountsAndClients" placeholder="Cliente o cuenta ...">
-            <button type="submit" class="btn btn-custom" formaction="modules/actions/search.php"> Search </button>
-            <button type="submit" class="btn" formaction="modules/actions/receipt.create.php"> Payment </button>
+            <?php
+              echo '<input type="text" class="search-query" list="accountsAndClients" placeholder="Cliente o cuenta ..." name="search" value="' . $search . '">';
+            ?>
+            <button type="submit" class="btn btn-custom" formaction="modules/actions/search.php"> <i class="icon-search"> </i> </button>
+            <button type="submit" class="btn" formaction="modules/actions/receipt.display.php"> <i class="icon-barcode"></i> </button>
           </div>
           <datalist id="accountsAndClients"> 
             <?php
@@ -31,10 +34,10 @@ session_start();
               if (mysqli_connect_errno()){
                 echo "failed" . mysqli_connect_error();
               } else {
-                $sql = "Select * from clients";
+                $sql = "Select * from Clients";
                 $clients = mysqli_query($conn, $sql);
                 while($row = mysqli_fetch_array($clients)) {
-                  echo "<option value=\"" . $row['name'] . "\">";
+                  echo "<option value=\"" . $row['last_name'] . ", " . $row['first_name'] . "\">";
                 }
               }
               mysqli_close($conn);
@@ -51,6 +54,8 @@ session_start();
               include("modules/views/client.phtml");
             } else if ($_SESSION['search_action'] == 'payment') {
               include("modules/views/receipt.create.phtml");
+            } else if($_SESSION['search_action'] == 'not_found') {
+              echo '<p class="text-error"> No se encontro </p>'; 
             }
           } 
         ?>
