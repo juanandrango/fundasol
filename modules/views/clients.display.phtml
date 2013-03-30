@@ -1,0 +1,35 @@
+<!-- Clients' list -->
+<?php
+   $conn = mysqli_connect("localhost", "root", "root", "fundasol");
+   $sql_clients = "SELECT last_name, first_name, state_id FROM Clients ORDER BY Clients.last_name ASC";
+    $result_clients = mysqli_query($conn, $sql_clients);
+    $clients = array();
+    while($client_obj =  mysqli_fetch_assoc($result_clients)) {
+      array_push($clients, $client_obj);
+    }
+   mysqli_close($conn);  
+?>
+
+  <table class='table'> 
+    <thead>
+      <tr>
+        <?php
+        foreach($clients[0] as $key=>$value ) {
+          echo "<th>" . $key . "</th>";
+        }
+        ?>
+      </tr>
+    </thead>
+    <tbody>
+      <?php
+      foreach($clients as $tmp_client) {
+        echo "<tr>";
+        foreach ($tmp_client as $key=>$value) {
+          echo "<td>" . $value . "</td>";
+        } 
+        echo "</tr>";
+      }
+      ?>
+    </tbody>
+  </table>
+</form>

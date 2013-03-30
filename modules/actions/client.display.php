@@ -2,7 +2,7 @@
 session_start();
 //TODO make this variable global
 $not_found_msg = "not_found";
-$_SESSION['search_action'] = 'payment';
+$_SESSION['search_action'] = 'client';
 $client_name = $_POST['search'];
 $_SESSION['search'] = $client_name;
 $_SESSION['receipt_create_msg'] = "";

@@ -1,0 +1,23 @@
+<?php
+$connsearch_result = $_SESSION['search_result'];
+if( $_SESSION['search_result'] == "not_found") {
+  echo "<p class='text-error'>El cliente no esta en nuestros records!</p>";
+  return;
+}
+
+$conn = mysqli_connect("localhost", "root", "root", "fundasol");
+$sql_client = "SELECT * FROM Clients WHERE Clients.id = " . $search_result;
+$sql_accounts = "SELECT * FROM Accounts WHERE Accounts.client_id=" . $search_result;
+
+$result_client = mysqli_query($conn, $sql_client);
+$result_accounts = mysqli_query($conn, $sql_accounts);
+
+$client = mysqli_fetch_assoc($result_client);
+$accounts = array();
+while($account_obj = mysqli_fetch_assoc($result_accounts)) {
+  array_push($accounts, $account_obj);
+}
+mysqli_close($conn);
+
+?>
+<h2> <?php echo $client['last_name']; ?> </h2>

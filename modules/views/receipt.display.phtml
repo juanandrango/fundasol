@@ -1,0 +1,97 @@
+<?php
+  //TODO not_found should be a global variable not_found_msg
+  if( $_SESSION['search_result'] == "not_found") {
+    echo "<p class='text-error'>El cliente no esta en nuestros records!</p>";
+    return;
+  }
+  $search_result = $_SESSION['search_result'];
+  if (isset($_POST['account_selected'])) {
+    $account_selected = $_POST['account_selected'];
+    $_SESSION['account_selected'] = $account_selected;
+  } else {
+    $account_selected = $_SESSION['account_selected'];
+  }
+  
+  //Grab Client info, accounts of client, and receipts against giving account
+  //TODO What if client has more than 1 account ?
+  $conn = mysqli_connect("localhost", "root", "root", "fundasol");
+  $sql_client = "SELECT * FROM Clients WHERE Clients.id = " . $search_result;
+  $sql_accounts = "SELECT * FROM Accounts WHERE Accounts.client_id=" . $search_result . " AND Accounts.status = 'active'";
+ 
+  $result_client = mysqli_query($conn, $sql_client);
+  $result_accounts = mysqli_query($conn, $sql_accounts);
+  
+  $client = mysqli_fetch_assoc($result_client);
+  $accounts = array();
+  while($account_obj = mysqli_fetch_assoc($result_accounts)) {
+    array_push($accounts, $account_obj);
+  }
+  mysqli_close($conn);
+  
+  //Variables to be printed in HTML
+  $client_name = ucfirst($client['last_name']) . ", " . ucfirst($client['first_name']);
+?>
+
+<!-- Client Info -->
+<h4> <?php echo $client_name ?> </h4>
+<!-- Choose Accounts: if more than 1 account, Make user select first-->
+<form class="form-inline" method="POST" action="">
+  <select name="account_selected">
+    <?php
+    foreach($accounts as $active_account) {
+      $selected_attr = "";
+      if ($active_account['id'] == $account_selected) {
+        $selected_attr = "selected";
+      }
+      echo "<option value='". $active_account['id'] ."' ".$selected_attr." >" . $active_account['id'] . " - " . $active_account['amount'] . "</option>";
+    }
+    ?>
+  </select>
+  <input class="btn" type="submit">
+</form>
+
+<!-- Receipt list -->
+<?php
+//TODO Need not to display this and check for account being selected first!!!
+   $conn = mysqli_connect("localhost", "root", "root", "fundasol");
+   $sql_receipts = "SELECT * FROM Receipts WHERE Receipts.account_id = " . $account_selected . " ORDER BY Receipts.payment_n DESC";
+    $result_receipts = mysqli_query($conn, $sql_receipts);
+    $receipts = array();
+    while($receipt_obj =  mysqli_fetch_assoc($result_receipts)) {
+      array_push($receipts, $receipt_obj);
+    }
+   mysqli_close($conn);  
+?>
+
+<?php echo $_SESSION['receipt_create_msg'] ?>
+<form action='modules/actions/receipt.create.php' method='POST'>
+  <table class='table'> 
+    <thead>
+      <tr>
+        <?php
+        foreach($receipts[0] as $key=>$value ) {
+          echo "<th>" . $key . "</th>";
+        }
+        ?>
+      </tr>
+    </thead>
+    <tbody>
+      <?php
+      foreach($receipts as $tmp_receipt) {
+        echo "<tr>";
+        foreach ($tmp_receipt as $key=>$value) {
+          if ($key == "status" && $value == "not_paid") {
+            echo  "<td><input type='hidden' name='receipt_to_pay' value='" . $tmp_receipt['id'] . "'><input class='btn' type='submit' value='Pagar'></td>";  
+          } else {
+             echo "<td>" . $value . "</td>";
+          }          
+        } 
+        echo "</tr>";
+      }
+      ?>
+    </tbody>
+  </table>
+</form>
+
+
+
