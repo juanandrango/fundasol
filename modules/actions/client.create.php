@@ -10,7 +10,6 @@ if ($result) {
   $_SESSION['search_action'] = 'client';
   $new_client_id = mysqli_fetch_assoc(mysqli_query($conn, $sql_new_client_id));
   $_SESSION['search_result'] = $new_client_id['id'];
-  
 } else {
   $_SESSION['search_action'] = 'clients_new';
 }

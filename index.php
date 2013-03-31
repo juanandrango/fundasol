@@ -93,5 +93,26 @@ session_start();
   <!-- Linking JS files -->
   <script src="js/jquery-1.9.1.js"></script>
   <script src="js/bootstrap.js"></script>
+  <script>
+  $('#create_account_btn').click(function() {
+    if ($('#create_account').is(':hidden')) {
+      $('#create_account').slideDown();
+      $('#create_account_btn').hide();
+    } else {
+      $('#create_account').hide();
+    }
+  });
+  $('#account_cancel_btn').click(function() {
+    if ($('#create_account').is(':hidden')) {
+      $('#create_account').slideDown();
+    } else {
+      $('#create_account').hide();
+      $('#create_account_btn').show();
+    }
+  });
+  
+  
+  </script>
+  
 </body>
 </html>

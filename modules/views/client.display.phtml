@@ -1,5 +1,5 @@
 <?php
-$connsearch_result = $_SESSION['search_result'];
+$search_result = $_SESSION['search_result'];
 if( $_SESSION['search_result'] == "not_found") {
   echo "<p class='text-error'>El cliente no esta en nuestros records!</p>";
   return;
@@ -9,15 +9,85 @@ $conn = mysqli_connect("localhost", "root", "root", "fundasol");
 $sql_client = "SELECT * FROM Clients WHERE Clients.id = " . $search_result;
 $sql_accounts = "SELECT * FROM Accounts WHERE Accounts.client_id=" . $search_result;
 
+$sql_client_info ="SELECT state_id, phone_home, address_home, phone_work, address_work, phone_cell, phone_reference FROM Clients WHERE Clients.id =" . $search_result;
+
 $result_client = mysqli_query($conn, $sql_client);
 $result_accounts = mysqli_query($conn, $sql_accounts);
+$result_client_info = mysqli_query($conn, $sql_client_info);
 
 $client = mysqli_fetch_assoc($result_client);
+$client_info = mysqli_fetch_assoc($result_client_info);
 $accounts = array();
 while($account_obj = mysqli_fetch_assoc($result_accounts)) {
   array_push($accounts, $account_obj);
 }
 mysqli_close($conn);
 
+$client_html = $client['last_name'] . ", " . $client['first_name'];
+$client_status_html = $client['status'];
+
 ?>
-<h2> <?php echo $client['last_name']; ?> </h2>
+<h2> <?php echo ucwords($client_html); ?> <small> <?php echo $client_status_html;?></small> </h2>
+<div class='tabbable'>
+  <ul class='nav nav-tabs'>
+    <li class='active'><a href='#client_info' data-toggle='tab'> Informacion</a></li>
+    <li><a href='#client_accounts' data-toggle='tab'>Cuentas</a></li>
+  </ul>
+  
+  <div class='tab-content'>
+    
+    <div class='tab-pane active' id='client_info'>
+      <form class='form-horizontal'>
+        <?php
+        foreach($client_info as $key => $value) {
+          if ($value === NULL) {
+            $control = "<input type = 'text' >";
+          } else {
+            $control = "<label>" . $value . "</label>";
+          }
+          echo "<div class='control-group'>
+                  <label class='control-label'><strong>".$key."</strong></label>
+                  <div class='controls'>
+                    ".$control."
+                  </div>
+                </div>";
+        }
+        ?>
+        <div class='form-actions'>
+          <button type='submit' class='btn btn-primary'> Actualizar </button>
+        </div> 
+      </form>
+    </div>
+    <div class='tab-pane' id='client_accounts'>
+      <button class='btn' id='create_account_btn'>Crear Cuenta</button>
+      <div id='create_account' style='display:none;'> 
+        <?php
+          include('modules/views/account.create.phtml');
+        ?>
+      </div>
+      <table class='table'> 
+        <thead>
+          <tr>
+            <?php
+            foreach($accounts[0] as $key=>$value ) {
+              echo "<th>" . $key . "</th>";
+            }
+            ?>
+          </tr>
+        </thead>
+        <tbody>
+          <?php
+          foreach($accounts as $tmp_account) {
+            echo "<tr>";
+            foreach ($tmp_account as $key=>$value) {
+             echo "<td>" . $value . "</td>";
+            } 
+            echo "</tr>";
+          }
+          ?>
+        </tbody>
+      </table>
+    </div>    
+  </div>
+</div>
+

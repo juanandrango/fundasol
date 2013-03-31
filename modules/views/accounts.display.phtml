@@ -1,0 +1,26 @@
+<table class='table'> 
+  <thead>
+    <tr>
+      <?php
+      foreach($receipts[0] as $key=>$value ) {
+        echo "<th>" . $key . "</th>";
+      }
+      ?>
+    </tr>
+  </thead>
+  <tbody>
+    <?php
+    foreach($receipts as $tmp_receipt) {
+      echo "<tr>";
+      foreach ($tmp_receipt as $key=>$value) {
+        if ($key == "status" && $value == "not_paid") {
+          echo  "<td><input type='hidden' name='receipt_to_pay' value='" . $tmp_receipt['id'] . "'><input class='btn' type='submit' value='Pagar'></td>";  
+        } else {
+           echo "<td>" . $value . "</td>";
+        }          
+      } 
+      echo "</tr>";
+    }
+    ?>
+  </tbody>
+</table>

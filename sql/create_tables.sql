@@ -2,7 +2,8 @@ CREATE TABLE Clients (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, 
   first_name VARCHAR(50) NOT NULL, 
   last_name VARCHAR(50) NOT NULL, 
-  state_id INT NOT NULL, 
+  state_id INT NOT NULL UNIQUE, 
+  status ENUM('active', 'inactive', 'pending') NOT NULL DEFAULT 'pending',
   phone_home VARCHAR(10), 
   phone_work VARCHAR(10),
   phone_reference VARCHAR(10),
@@ -31,7 +32,7 @@ CREATE TABLE Receipts (
   amount INT NOT NULL,
   payment_n INT NOT NULL, 
   time_stamp TIMESTAMP DEFAULT NOW(),
-status ENUM('paid', 'not_paid') DEFAULT 'not_paid', 
+  status ENUM('paid', 'not_paid') DEFAULT 'not_paid', 
   FOREIGN KEY (account_id) REFERENCES Accounts(id)
   -- Status: paid, partially_paid
 );
