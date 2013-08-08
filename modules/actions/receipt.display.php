@@ -7,7 +7,7 @@ $client_name = $_POST['search'];
 $_SESSION['search'] = $client_name;
 $_SESSION['receipt_create_msg'] = "";
 //TODO not assume this is valid and sanitaded.
-$conn = mysqli_connect("localhost", "root", "root", "fundasol");
+$conn = mysqli_connect("localhost", "root", "qpalFJ10mysql", "fundasol");
 $name_array = explode(", ", $client_name);
 $first_name = $name_array[1];
 $last_name = $name_array[0];

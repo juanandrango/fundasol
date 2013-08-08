@@ -1,6 +1,6 @@
 <!-- Clients' list -->
 <?php
-   $conn = mysqli_connect("localhost", "root", "root", "fundasol");
+$conn = mysqli_connect("localhost", "root", "qpalFJ10mysql", "fundasol");
    $sql_clients = "SELECT last_name, first_name, state_id FROM Clients ORDER BY Clients.last_name ASC";
     $result_clients = mysqli_query($conn, $sql_clients);
     $clients = array();

@@ -5,7 +5,7 @@ if( $_SESSION['search_result'] == "not_found") {
   return;
 }
 
-$conn = mysqli_connect("localhost", "root", "root", "fundasol");
+$conn = mysqli_connect("localhost", "root", "qpalFJ10mysql", "fundasol");
 $sql_client = "SELECT * FROM Clients WHERE Clients.id = " . $search_result;
 $sql_accounts = "SELECT * FROM Accounts WHERE Accounts.client_id=" . $search_result;
 

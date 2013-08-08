@@ -14,7 +14,7 @@
   
   //Grab Client info, accounts of client, and receipts against giving account
   //TODO What if client has more than 1 account ?
-  $conn = mysqli_connect("localhost", "root", "root", "fundasol");
+$conn = mysqli_connect("localhost", "root", "qpalFJ10mysql", "fundasol");
   $sql_client = "SELECT * FROM Clients WHERE Clients.id = " . $search_result;
   $sql_accounts = "SELECT * FROM Accounts WHERE Accounts.client_id=" . $search_result . " AND Accounts.status = 'active'";
  
@@ -53,7 +53,7 @@
 <!-- Receipt list -->
 <?php
 //TODO Need not to display this and check for account being selected first!!!
-   $conn = mysqli_connect("localhost", "root", "root", "fundasol");
+   $conn = mysqli_connect("localhost", "root", "qpalFJ10mysql", "fundasol");
    $sql_receipts = "SELECT * FROM Receipts WHERE Receipts.account_id = " . $account_selected . " ORDER BY Receipts.payment_n DESC";
     $result_receipts = mysqli_query($conn, $sql_receipts);
     $receipts = array();

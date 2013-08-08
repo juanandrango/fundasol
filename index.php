@@ -14,9 +14,9 @@ session_start();
    $search = $_SESSION['search']; 
   }
   function populateDatalist() {
-    $conn = mysqli_connect("localhost", "root", "root", "fundasol");
+    $conn = mysqli_connect("localhost", "root", "qpalFJ10mysql", "fundasol");
     if (mysqli_connect_errno()){
-      echo mysqli_connect_error();
+      echo "Error " . mysqli_connect_error();
     } else {
         $sql_all_clients = "SELECT last_name, first_name FROM Clients";
       $clients = mysqli_query($conn, $sql_all_clients);
