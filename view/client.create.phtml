@@ -1,0 +1,69 @@
+<?php
+  $requiredAttr = Client::$createUserRequiredAttrs;
+?>
+
+
+<div id='createNewClientAfter' class='hidden'> 
+<h2 id='requestSentID'></h2>
+<a href=#> Create another one </a>
+<a href=#> View Clients </a>
+</div>
+
+<form class='form-horizontal' method='post' id='createNewClientForm'> 
+  <legend> Nuevo Cliente </legend>
+  <?php
+  foreach($requiredAttr as $attr) {
+  ?>
+  <div class='control-group'>
+    <div class='controls'>
+      <input type='text' name='<?php echo $attr ?>' placeholder='<?php echo Client::$tableAttrs[$attr]['label'] ?>'>
+    </div> 
+  </div>
+  <?php 
+  }
+  ?>
+  <div class='control-group'>
+    <div class='controls'>
+      <input id='submit' type='submit' value='Crear Cliente' class='btn'>
+    </div>
+  </div>
+</form>  
+
+<script>
+ $(document).ready(function() {
+    $('#submit').click(function () {    
+      dataArray = {};
+      dataArray.first_name = $('input[name=first_name]').val();  
+      dataArray.last_name = $('input[name=last_name]').val();
+      dataArray.state_id = $('input[name=state_id]').val();
+
+      console.log(JSON.stringify(dataArray));
+
+      //start the ajax
+        $.ajax({
+          url: "index.php", 
+          type: "post",
+          data: { view: 'create_client', actions: ['create_client_A'],  create_client_A: dataArray},    
+          //cache: false,
+          success: function (html) {
+          $('#createNewClientForm').fadeOut('slow');
+          $('#createNewClientAfter').fadeIn('slow');     
+          $('#createNewClientAfter').removeClass('hidden');   
+          $('#requestSentID').text(html);
+          //   if (html==1) {          
+          //     $('.form').fadeOut('slow');         
+          //     $('.done').fadeIn('slow');
+          //   } else alert('Sorry, unexpected error. Please try again later.');       
+          }   
+        });
+        
+        //cancel the submit button default behaviours
+        return false;
+      }); 
+  });
+</script>
+
+
+
+
+

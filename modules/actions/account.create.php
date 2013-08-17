@@ -1,6 +1,11 @@
 <?php
 //TODO Validation!
 session_start();
+
+if (1) {
+  return;
+}
+
 if (isset($_POST['amount']) && isset($_POST['n_payments']) && isset($_POST['start_week'])) {
 $conn = mysqli_connect("localhost", "root", "qpalFJ10mysql", "fundasol");
   $client_id = $_SESSION['search_result'];

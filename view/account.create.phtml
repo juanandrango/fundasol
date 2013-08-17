@@ -1,0 +1,62 @@
+<?php
+  $requiredAttr = Account::$createAccountRequiredAttrs;
+?>
+
+<form class='form-horizontal' method='post' id='createAccountForm'>
+  <legend> Nueva Cuenta </legend>
+  
+  <?php
+  foreach($requiredAttr as $attr) {
+  ?>
+  <div class='control-group'>
+    <div class='controls'>
+      <input type='text' name='<?php echo $attr ?>' placeholder='<?php echo Account::$tableAttrs[$attr]['label'] ?>'>
+    </div> 
+  </div>
+  <?php 
+  }
+  ?>
+
+  <div class='form-actions'>
+    <button type='submit' class='btn btn-primary' id='createAccountBtn'> Crear cuenta </button>
+    <button type='button' class='btn' id='account_cancel_btn'> Cancelar </button>
+  </div> 
+</form>
+
+<script>
+ $(document).ready(function() {
+    $('#createAccountBtn').click(function () {    
+      dataArray = {};
+      
+       <?php
+      foreach($requiredAttr as $key) {
+        echo "if( $('input[name= " . $key . "]').val() != '') {dataArray." . $key . " = $('input[name= " . $key . "]').val(); }"; 
+      }
+      ?>
+
+      console.log(JSON.stringify(dataArray));
+
+      //start the ajax
+        $.ajax({
+          url: "index.php", 
+          type: "post",
+          data: { actions: ['create_account_A'],  create_account_A: dataArray},    
+          //cache: false,
+          success: function (html) {
+            alert(html);
+          //$('#createNewClientForm').fadeOut('slow');
+          //$('#createNewClientAfter').fadeIn('slow');     
+          //$('#createNewClientAfter').removeClass('hidden');   
+          //$('#requestSentID').text(html);
+          //   if (html==1) {          
+          //     $('.form').fadeOut('slow');         
+          //     $('.done').fadeIn('slow');
+          //   } else alert('Sorry, unexpected error. Please try again later.');       
+          }   
+        });
+        
+        //cancel the submit button default behaviours
+        return false;
+      }); 
+  });
+</script>

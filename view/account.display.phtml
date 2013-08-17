@@ -1,0 +1,70 @@
+<?php
+  $account = new Account(Controller::$actionResult['get_account_A']);
+  $client = new Client(Controller::$actionResult['get_client_A']);
+  $client_html = $client->attrArray[Client::last_name] . ", " . $client->attrArray[Client::first_name];
+  $account_id_html = "Account " . $account->attrArray['id'];
+?>
+
+<h2>  <?php echo $account_id_html;?> </h2>
+<h2> <small> <a href = "#" onclick='$.ajax({url:"index.php", data: { view: "client_profile", actions: ["get_client_A", "get_accounts_client_A"] , get_client_A: "<?php echo $client->attrArray["id"]; ?>", get_accounts_client_A: "<?php echo $client->attrArray["id"]; ?>"}, success: function(html) {$("#viewContent").html(html)}, type: "post"});'> <?php echo ucwords($client_html); ?> </a> </small> </h2>
+<div class='tabbable'>
+  <ul class='nav nav-tabs'>
+    <li class='active'><a href='#account_info' data-toggle='tab'> Informacion</a></li>
+  </ul>
+  
+  <div class='tab-content'>
+    
+    <div class='tab-pane active' id='account_info'>
+      <form class='form-horizontal' id='updateaccountInfoForm'>
+        <?php
+        foreach($account->attrArray as $key => $value) {
+          if ($value === NULL) {
+            $control = "<input type = 'text' name='" . $key . "' >";
+          } else {
+            $control = "<label>" . $value . "</label>";
+          }
+          echo "<div class='control-group'>
+                  <label class='control-label'><strong>". account::$tableAttrs[$key]['label'] ."</strong></label>
+                  <div class='controls'>
+                    ".$control."
+                  </div>
+                </div>";
+        }
+        ?>
+        <div class='form-actions'>
+          <button type='submit' class='btn btn-primary' id='updateaccountInfoFormUpdate'> Actualizar </button>
+        </div> 
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+ // $(document).ready(function() {
+ //    $('#updateaccountInfoFormUpdate').click(function () {    
+      
+ //      dataArray = {};
+ //      <?php
+ //      foreach($account->attrArray as $key => $value) {
+ //        if ($value === NULL) {
+ //          echo "if( $('input[name= " . $key . "]').val() != '') {dataArray." . $key . " = $('input[name= " . $key . "]').val(); }";
+ //        } 
+ //      }
+ //      ?>
+ //      dataArray.accountId = <?php echo $account->attrArray[account::id]; ?>;
+ //      console.log(JSON.stringify(dataArray));
+
+ //      //start the ajax
+ //        $.ajax({
+ //          url: "index.php", 
+ //          type: "post",
+ //          data: { actions: ['update_account_info_A'],  update_account_info_A: dataArray},     
+ //          //cache: false,
+ //          success: function () { 
+ //            alert("done");
+ //          }   
+ //        });
+ //        return true;
+ //      }); 
+ //  });
+</script>

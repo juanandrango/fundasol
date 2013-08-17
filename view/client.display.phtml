@@ -1,0 +1,109 @@
+<?php
+  $client = new Client(Controller::$actionResult['get_client_A']);
+  $client_html = $client->attrArray[Client::last_name] . ", " . $client->attrArray[Client::first_name];
+  $client_status_html = $client->attrArray['status'];
+
+  $accounts = Controller::$actionResult['get_accounts_client_A'];
+  $accountsArray = array();
+  while($account_obj = mysqli_fetch_assoc($accounts)) {
+    array_push($accountsArray, $account_obj);
+  }
+?>
+
+<h2> <?php echo ucwords($client_html); ?> <small> <?php echo $client_status_html;?></small> </h2>
+<div class='tabbable'>
+  <ul class='nav nav-tabs'>
+    <li class='active'><a href='#client_info' data-toggle='tab'> Informacion</a></li>
+    <li><a href='#client_accounts' data-toggle='tab'>Cuentas</a></li>
+  </ul>
+  
+  <div class='tab-content'>
+    
+    <div class='tab-pane active' id='client_info'>
+      <form class='form-horizontal' id='updateClientInfoForm'>
+        <?php
+        foreach($client->attrArray as $key => $value) {
+          if ($value === NULL) {
+            $control = "<input type = 'text' name='" . $key . "' >";
+          } else {
+            $control = "<label>" . $value . "</label>";
+          }
+          echo "<div class='control-group'>
+                  <label class='control-label'><strong>". Client::$tableAttrs[$key]['label'] ."</strong></label>
+                  <div class='controls'>
+                    ".$control."
+                  </div>
+                </div>";
+        }
+        ?>
+        <div class='form-actions'>
+          <button type='submit' class='btn btn-primary' id='updateClientInfoFormUpdate'> Actualizar </button>
+        </div> 
+      </form>
+    </div>
+    <div class='tab-pane' id='client_accounts'>
+      <a  href='#' class='btn' id='create_account_btn' onclick="$.ajax({ url: 'index.php', data: { view: 'create_account'}, success: function(html) {$('#viewContent').html(html)}, type: 'post'});">Crear Cuenta</a>
+      <div id='create_account' style='display:none;'> 
+      </div>
+      <table class='table'> 
+        <thead>
+          <tr>
+            <?php
+            if (count($accountsArray) !== 0) {
+              foreach(Account::$tableAttrs as $key=>$value ) {
+                echo "<th>" . $value['label'] . "</th>";
+              }
+            }
+            ?>
+          </tr>
+        </thead>
+        <tbody>
+          <?php
+          foreach($accountsArray as $tmp_account) {
+            echo "<tr>";
+            foreach (Account::$tableAttrs as $key=>$value) {
+             echo "<td>";
+             ?>
+             <a href='#' onclick='$.ajax({url:"index.php", data: { view: "account_profile", actions: ["get_account_A" , "get_client_A"] , get_account_A: "<?php echo $tmp_account["id"]; ?>", get_client_A: "<?php echo $tmp_account["client_id"] ?>" }, success: function(html) {$("#viewContent").html(html)}, type: "post"});'>
+             <?php
+
+             echo $tmp_account[$key] . "</a></td>";
+            } 
+            echo "</tr>";
+          }
+          ?>
+        </tbody>
+      </table>
+    </div>    
+  </div>
+</div>
+
+<script>
+ $(document).ready(function() {
+    $('#updateClientInfoFormUpdate').click(function () {    
+      
+      dataArray = {};
+      <?php
+      foreach($client->attrArray as $key => $value) {
+        if ($value === NULL) {
+          echo "if( $('input[name= " . $key . "]').val() != '') {dataArray." . $key . " = $('input[name= " . $key . "]').val(); }";
+        } 
+      }
+      ?>
+      dataArray.clientId = <?php echo $client->attrArray[Client::id]; ?>;
+      console.log(JSON.stringify(dataArray));
+
+      //start the ajax
+        $.ajax({
+          url: "index.php", 
+          type: "post",
+          data: { actions: ['update_client_info_A'],  update_client_info_A: dataArray},     
+          //cache: false,
+          success: function () { 
+            alert("done");
+          }   
+        });
+        return true;
+      }); 
+  });
+</script>

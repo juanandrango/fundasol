@@ -1,0 +1,39 @@
+<!-- Clients' list -->
+<?php
+
+    $result_accounts = Controller::$actionResult['get_accounts_table_A'];
+    $accounts = array();
+    while($account_obj = mysqli_fetch_assoc($result_accounts)) {
+      array_push($accounts, new Account($account_obj));
+    }
+    $attrs = array(Account::amount, Account::client_id, Account::n_paid);
+?>
+
+<table class='table'> 
+  <thead>
+    <tr>
+      <?php
+      foreach($attrs as $key) {
+        echo "<th>" . Account::$tableAttrs[$key]['label'] . "</th>";
+      }
+      ?>
+    </tr>
+  </thead>
+  <tbody>
+    <?php
+    foreach($accounts as $tmp_account) {
+      echo "<tr>";
+      foreach ($attrs as $key) {
+        echo "<td>";
+    ?>
+    <a href = "#" onclick='$.ajax({url:"index.php", data: { view: "account_profile", actions: ["get_account_A" , "get_client_A"] , get_account_A: "<?php echo $tmp_account->attrArray["id"]; ?>", get_client_A: "<?php echo $tmp_account->attrArray["client_id"] ?>" }, success: function(html) {$("#viewContent").html(html)}, type: "post"});'>
+    
+    <?php
+        echo ucfirst($tmp_account->attrArray[$key]) . "</a></td>";
+      } 
+    echo "</tr>";
+    }
+    ?>
+  </tbody>
+</table>
+
