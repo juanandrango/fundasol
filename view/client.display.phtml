@@ -80,6 +80,7 @@
 
 <script>
  $(document).ready(function() {
+
     $('#updateClientInfoFormUpdate').click(function () {    
       
       dataArray = {};
@@ -97,13 +98,15 @@
         $.ajax({
           url: "index.php", 
           type: "post",
-          data: { actions: ['update_client_info_A'],  update_client_info_A: dataArray},     
+          data: { view: 'client_profile', actions: ['update_client_info_A'],  update_client_info_A: dataArray},     
           //cache: false,
           success: function () { 
-            alert("done");
+            for(var key in dataArray) {
+              $('input[name=' + key + ']').replaceWith('<label>' + dataArray[key] + '</label>');
+            }
           }   
         });
-        return true;
+        return false;
       }); 
   });
 </script>

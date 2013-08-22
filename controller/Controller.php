@@ -32,6 +32,7 @@ class Controller {
 	public static function processView() {
 		if(isset($_POST['view'])) {
 			Controller::$view = View::$viewsLoc . View::$viewsList[$_POST['view']];
+			include(Controller::$view);
 		}
 	}
 }

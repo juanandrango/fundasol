@@ -13,8 +13,6 @@
   
   Controller::processAction();
   Controller::processView();
-  
-  include(Controller::$view);
 
   return;
 

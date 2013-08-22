@@ -14,7 +14,7 @@ class Model {
 
 	public static function disconnect() {
 		mysqli_close(Model::$connDB);
-		echo "disconnecting";
+		//echo "disconnecting";
 	}
 
 
@@ -22,6 +22,8 @@ class Model {
 
 	public static function getClient($clientID) {
 		$sql_match_client_id = "SELECT * FROM Clients WHERE Clients.id = '" . $clientID ."'";
+		//SET SESSION VAR (later to be defined)
+		$_SESSION['currentClientId'] = $clientID;
 		return mysqli_fetch_assoc(mysqli_query(Model::$connDB, $sql_match_client_id));
 	}
 

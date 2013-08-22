@@ -12,7 +12,6 @@
 			'account_profile' 	=> 	'account.display.phtml'
 			);
 		public static $viewsLoc = 'view/';
-
 	}
 
 ?>

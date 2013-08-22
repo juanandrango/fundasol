@@ -1,62 +1,106 @@
-<?php
-  $requiredAttr = Account::$createAccountRequiredAttrs;
-?>
-
 <form class='form-horizontal' method='post' id='createAccountForm'>
-  <legend> Nueva Cuenta </legend>
+  <legend> <h3> Nueva Cuenta  </h3></legend>
   
-  <?php
-  foreach($requiredAttr as $attr) {
-  ?>
   <div class='control-group'>
+    <label class="control-label"><?php echo Account::$tableAttrs[Account::start_week]['label']; ?></label>
     <div class='controls'>
-      <input type='text' name='<?php echo $attr ?>' placeholder='<?php echo Account::$tableAttrs[$attr]['label'] ?>'>
+      <input type='text' name='<?php echo Account::start_week; ?>' title="The day client makes his first payment"/>
     </div> 
   </div>
-  <?php 
-  }
-  ?>
+  
+   <div class='control-group'>
+    <label class="control-label"><?php echo Account::$tableAttrs[Account::amount]['label']; ?></label>
+    <div class='controls'>
+      <input type='text' name='<?php echo Account::amount; ?>' title="The principal amount"/>
+    </div> 
+  </div>
 
+   <div class='control-group'>
+    <label class="control-label"><?php echo Account::$tableAttrs[Account::n_payments]['label']; ?></label>
+    <div class='controls'>
+      <input type='text' name='<?php echo Account::n_payments; ?>' title="The amount of payments in weeks"/>
+    </div> 
+  </div>
+  
   <div class='form-actions'>
-    <button type='submit' class='btn btn-primary' id='createAccountBtn'> Crear cuenta </button>
-    <button type='button' class='btn' id='account_cancel_btn'> Cancelar </button>
+    <button type='submit' class='btn btn-primary' id='prepareDataBtn'> Crear cuenta </button>
+    <!-- <button type='button' class='btn' id='account_cancel_btn'> Cancelar </button> -->
   </div> 
 </form>
 
+<div class="modal hide fade" id="myModal">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3>Crear Cuenta</h3>
+  </div>
+  <div class="modal-body">
+    <p>El client (#) abrira una cuenta (#) de valor (#). Pagos empiezan (#) y son (#) en total</p>
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">Editar</a>
+    <a href="#" class="btn btn-primary" id='createAccountBtn'>Crear</a>
+  </div>
+</div>
+
 <script>
- $(document).ready(function() {
-    $('#createAccountBtn').click(function () {    
-      dataArray = {};
+  $(document).ready(function() {
+    dataArray = {};
+    $(function() {
+      //Place the tooltips to all input with title to the right
+      $('input[title]').tooltip({placement:'right'});
+
+      //Help user input the right data
+      $('input[name="start_week"]').datepicker();
+      $('input[name="amount"]').maskMoney();
+      $('input[name="n_payments"]').spinedit({
+        min: 1,
+        max: 100,
+        step: 1,
+        start: 1, 
+        value: 1
+      });
+    });
+
+    $('#prepareDataBtn').click(function () {
+      //Prepare data to transport
+      //All validation done at the server end (don't count on javascript)
       
-       <?php
-      foreach($requiredAttr as $key) {
-        echo "if( $('input[name= " . $key . "]').val() != '') {dataArray." . $key . " = $('input[name= " . $key . "]').val(); }"; 
-      }
-      ?>
+      $('input').each( function () {
+        if ($(this).val() == '') {
+          $(this).parent().parent().addClass('error');
+        } else {
+          $(this).parent().parent().removeClass('error');
+        }
+      });
 
-      console.log(JSON.stringify(dataArray));
+      if ($('input[name="<?php echo Account::start_week; ?>"]').val() != '' &&
+        $('input[name="<?php echo Account::amount; ?>"]').val() != '' &&
+        $('input[name="<?php echo Account::n_payments; ?>"]').val() != '') {
+        dataArray['<?php echo Account::start_week; ?>']   = $('input[name="<?php echo Account::start_week ?>"]').val();
+        dataArray['<?php echo Account::amount; ?>']       = $('input[name="<?php echo Account::amount ?>"]').val();
+        dataArray['<?php echo Account::n_payments; ?>']   = $('input[name="<?php echo Account::n_payments ?>"]').val();
+        dataArray.client_id = '<?php echo $_SESSION['currentClientId']; ?>'; 
+        dataArray.n_paid = 0; //TODO Assumed, should be ignored and set in PHP script instead (hacker might attempt to change this);
+        //Debug
+        console.log("DEBUG: (account.create.phtml): " + JSON.stringify(dataArray));
+        $('#myModal').modal('show');
+      } 
+      return false;
+    });
 
-      //start the ajax
-        $.ajax({
-          url: "index.php", 
-          type: "post",
-          data: { actions: ['create_account_A'],  create_account_A: dataArray},    
-          //cache: false,
-          success: function (html) {
-            alert(html);
-          //$('#createNewClientForm').fadeOut('slow');
-          //$('#createNewClientAfter').fadeIn('slow');     
-          //$('#createNewClientAfter').removeClass('hidden');   
-          //$('#requestSentID').text(html);
-          //   if (html==1) {          
-          //     $('.form').fadeOut('slow');         
-          //     $('.done').fadeIn('slow');
-          //   } else alert('Sorry, unexpected error. Please try again later.');       
-          }   
-        });
-        
-        //cancel the submit button default behaviours
-        return false;
-      }); 
+    $('#createAccountBtn').click(function () {          
+      //Start the AJAX
+      $.ajax({
+        url: "index.php", 
+        type: "post",
+        data: { actions: ['create_account_A'],  create_account_A: dataArray},    
+        success: function (html) {
+          $('#myModal').modal('hide');
+        }   
+      });  
+      return false;
+    });
+
   });
+
 </script>

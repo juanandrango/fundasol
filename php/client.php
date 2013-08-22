@@ -1,8 +1,5 @@
 <?php
 
-// include('record.php');
-// include('dbinterface.php');
-
   class Client {
 
     const id = "id";
@@ -56,14 +53,6 @@
         $this->attrArray[$key] = $value;
       }
     }
-
-    // public function displayRow() {
-    //   echo $this->clientId;
-    // }
-
-    // public function printClient() {
-    //   print_r($this->attrArray);
-    // }
 
     private function getCreateTableQuery() {
       $query = "CREATE TABLE Clients (";
